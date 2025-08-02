@@ -5,7 +5,8 @@
       <div class="loading-spinner w-12 h-12 border-4 border-white border-opacity-30 border-t-white rounded-full mb-6"></div>
       <h2 class="text-2xl font-semibold mb-3 text-center">🎨 Generating AI-powered webpage...</h2>
       <p class="text-white text-opacity-90 mb-2 text-center">Creating content for: <strong>{{ currentRoute }}</strong></p>
-      <p class="text-white text-opacity-75 mb-8 text-center text-sm">Using model: <strong>{{ $route.query.model || 'openai' }}</strong></p>
+      <p class="text-white text-opacity-75 mb-2 text-center text-sm">Using model: <strong>{{ $route.query.model || 'openai' }}</strong></p>
+      <p class="text-white text-opacity-60 mb-8 text-center text-sm">⏱️ Generation time: <strong>{{ generationTime }}s</strong></p>
       <div class="w-72 h-2 bg-white bg-opacity-20 rounded-full overflow-hidden">
         <div class="loading-progress h-full bg-white bg-opacity-80 rounded-full"></div>
       </div>
@@ -46,11 +47,21 @@ export default {
     const error = ref(null)
     const htmlContent = ref('')
     const currentRoute = ref('')
+    const generationTime = ref(0)
+    const startTime = ref(null)
+    const timerInterval = ref(null)
 
     const fetchWebsiteForRoute = async (routePath) => {
       try {
         loading.value = true
         error.value = null
+        generationTime.value = 0
+
+        // Start the timer with timestamp
+        startTime.value = Date.now()
+        timerInterval.value = setInterval(() => {
+          generationTime.value = Math.floor((Date.now() - startTime.value) / 1000)
+        }, 100) // Update every 100ms for smoother display
 
         // Get model from query parameters
         const modelParam = route.query.model || 'openai' // Default to openai model
@@ -105,6 +116,11 @@ export default {
         
       } finally {
         loading.value = false
+        // Clear the timer
+        if (timerInterval.value) {
+          clearInterval(timerInterval.value)
+          timerInterval.value = null
+        }
       }
     }
 
@@ -207,6 +223,7 @@ export default {
       error,
       htmlContent,
       currentRoute,
+      generationTime,
       retryGeneration,
       handleContentClick
     }
