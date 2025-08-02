@@ -184,15 +184,16 @@ export default {
         }
 
         const data = await response.json()
-        // Filter to show models with tier "seed" or "anonymous"
-        const availableModels = data.filter(model => model.tier === 'seed' || model.tier === 'anonymous')
-        models.value = availableModels.sort((a, b) => {
-          // Sort by tier (seed first), then by name
-          if (a.tier !== b.tier) {
-            return a.tier === 'seed' ? -1 : b.tier === 'seed' ? 1 : 0
-          }
-          return a.name.localeCompare(b.name)
-        })
+        models.value = data;
+        // // Filter to show models with tier "seed" or "anonymous"
+        // const availableModels = data.filter(model => model.tier === 'seed' || model.tier === 'anonymous')
+        // models.value = availableModels.sort((a, b) => {
+        //   // Sort by tier (seed first), then by name
+        //   if (a.tier !== b.tier) {
+        //     return a.tier === 'seed' ? -1 : b.tier === 'seed' ? 1 : 0
+        //   }
+        //   return a.name.localeCompare(b.name)
+        // })
 
       } catch (err) {
         console.error('Error fetching models:', err)

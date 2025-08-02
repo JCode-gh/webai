@@ -136,7 +136,27 @@ export default {
         }
         
         if (routePath === '/' || routePath === '') {
-          prompt = `Create an absolutely stunning, unique ${selectedStyle} homepage using Tailwind CSS. This must be a jaw-dropping, modern website that stands out from typical corporate pages. Include Tailwind CSS CDN in head. VISUAL REQUIREMENTS: Use real images from these sources ONLY - logos from logo.clearbit.com/[company].com (e.g. logo.clearbit.com/google.com), hero images from picsum.photos/1200/600, profile photos from randomuser.me/api/portraits/[men/women]/[1-99].jpg, icons from heroicons.com. DESIGN MUST BE: Visually striking with bold colors, unique layouts, creative sections, modern typography, interactive elements, creative hover effects, dynamic gradients, and unconventional but professional design choices. SECTIONS: 1) Eye-catching navigation with creative logo placement 2) Hero section with dramatic visuals and compelling copy 3) Unique about section with creative storytelling 4) Services grid with innovative card designs 5) Dynamic testimonials with personality 6) Portfolio showcase with hover effects 7) Team section with creative profiles 8) Interactive FAQ with smooth animations 9) Contact form with modern styling 10) Footer with social links and creative elements. Use realistic content, never placeholders. Navigation links: /about, /services, /contact, /portfolio, /blog, /team, /products. Return clean HTML only. Style: ${selectedStyle}. ID: ${randomSeed}-${timestamp}`
+          prompt = `Create an absolutely stunning, unique ${selectedStyle} homepage with custom CSS. This must be a jaw-dropping, modern website that stands out from typical corporate pages. Write your own high-quality CSS - DO NOT use Tailwind CSS or any external frameworks. 
+
+CRITICAL ACCESSIBILITY REQUIREMENT - READ THIS FIRST:
+CONTRAST IS MANDATORY! Every single text element MUST have proper contrast:
+- White text (#ffffff, #f1f5f9, #e2e8f0) ONLY on dark backgrounds (#000000, #0f172a, #1e293b, #334155)
+- Dark text (#000000, #0f172a, #1e293b) ONLY on light backgrounds (#ffffff, #f8fafc, #f1f5f9)
+- NEVER EVER use dark text on dark backgrounds
+- NEVER EVER use light text on light backgrounds
+- ALL headings, paragraphs, labels, buttons, and navigation text MUST follow this rule
+- Test every color combination before using it
+- If unsure, use white text on dark background or black text on white background
+
+CUSTOM CSS REQUIREMENTS: Write Tailwind-GRADE CSS quality - professional, modern, responsive utility-first approach but as custom CSS. Use advanced CSS features: CSS Grid, Flexbox, custom properties (CSS variables), modern animations, transitions, hover effects, responsive design with media queries. Your CSS should rival the quality of top frameworks but be completely custom-written. 
+
+VISUAL REQUIREMENTS: Use real images from these sources ONLY - logos from logo.clearbit.com/[company].com (e.g. logo.clearbit.com/google.com), hero images from picsum.photos/1200/600, profile photos from randomuser.me/api/portraits/[men/women]/[1-99].jpg. For icons, create your own SVG code directly inline - DO NOT link to heroicons.com or any external icon services. Write clean, modern SVG icons with proper viewBox, paths, and styling. 
+
+DESIGN MUST BE: Visually striking with bold colors, unique layouts, creative sections, modern typography, interactive elements, creative hover effects, dynamic gradients, and unconventional but professional design choices. 
+
+SECTIONS: 1) Eye-catching navigation with creative logo placement 2) Hero section with dramatic visuals and compelling copy 3) Unique about section with creative storytelling 4) Services grid with innovative card designs 5) Dynamic testimonials with personality 6) Portfolio showcase with hover effects 7) Team section with creative profiles 8) Interactive FAQ with smooth animations 9) Contact form with modern styling 10) Footer with social links and creative elements. Use realistic content, never placeholders. Navigation links: /about, /services, /contact, /portfolio, /blog, /team, /products. 
+
+IMPORTANT: Return ONLY complete, valid HTML starting with <!DOCTYPE html> and ending with </html>. Include all CSS embedded in <style> tags within the <head>. Include proper meta tags, viewport, and title. Ensure html and body have full height (100vh). No explanations, no markdown, no code blocks - just pure HTML code ready to render. Style: ${selectedStyle}. ID: ${randomSeed}-${timestamp}`
         } else {
           const routeInfo = analyzeRoute(routePath)
           const pageName = routePath.replace('/', '').replace(/[-_]/g, ' ')
@@ -146,15 +166,75 @@ export default {
             const category = routeInfo.baseCategory
             const itemId = routeInfo.itemId
             
-            prompt = `Create a stunning ${selectedStyle} individual ${category} detail page using Tailwind CSS for item/ID: "${itemId}". This is a SINGLE ITEM detail page, not a listing. Include Tailwind CSS CDN in head. VISUAL REQUIREMENTS: Use real images from logo.clearbit.com/[company].com, picsum.photos/[width]/[height], randomuser.me/api/portraits/[men/women]/[1-99].jpg, heroicons.com. PAGE TYPE: This is a detailed view of ONE specific ${category.slice(0, -1)} item. CONTENT STRUCTURE: 1) Navigation header with breadcrumbs showing ${category} > ${itemId} 2) Hero section showcasing THIS specific item with large images 3) Detailed specifications/information about this ONE item 4) Image gallery or media section for this item 5) Reviews/testimonials specific to this item 6) Related/similar items section 7) Purchase/contact/action buttons 8) Detailed description sections 9) Footer. IMPORTANT: Generate realistic, detailed content for ONE specific ${category.slice(0, -1)} item with ID "${itemId}". If products: show product details, specs, pricing. If blog: show full article content. If team: show person's bio, role, contact. Make it feel like a real individual item page, not a category listing. Navigation: /${category}, /about, /contact, /home. Style: ${selectedStyle}. Item: ${itemId}. ID: ${randomSeed}-${timestamp}`
+            prompt = `Create a stunning ${selectedStyle} individual ${category} detail page with custom CSS for item/ID: "${itemId}". This is a SINGLE ITEM detail page, not a listing. Write your own high-quality CSS - DO NOT use Tailwind CSS or any external frameworks. 
+
+CRITICAL ACCESSIBILITY REQUIREMENT - READ THIS FIRST:
+CONTRAST IS MANDATORY! Every single text element MUST have proper contrast:
+- White text (#ffffff, #f1f5f9, #e2e8f0) ONLY on dark backgrounds (#000000, #0f172a, #1e293b, #334155)
+- Dark text (#000000, #0f172a, #1e293b) ONLY on light backgrounds (#ffffff, #f8fafc, #f1f5f9)
+- NEVER EVER use dark text on dark backgrounds
+- NEVER EVER use light text on light backgrounds
+- ALL headings, paragraphs, labels, buttons, and navigation text MUST follow this rule
+- Test every color combination before using it
+- If unsure, use white text on dark background or black text on white background
+
+CUSTOM CSS REQUIREMENTS: Write Tailwind-GRADE CSS quality - professional, modern, responsive utility-first approach but as custom CSS. Use advanced CSS features: CSS Grid, Flexbox, custom properties (CSS variables), modern animations, transitions, hover effects, responsive design with media queries. Your CSS should rival the quality of top frameworks but be completely custom-written. 
+
+VISUAL REQUIREMENTS: Use real images from logo.clearbit.com/[company].com, picsum.photos/[width]/[height], randomuser.me/api/portraits/[men/women]/[1-99].jpg. For icons, create your own SVG code directly inline - DO NOT link to heroicons.com or any external icon services. Write clean, modern SVG icons with proper viewBox, paths, and styling. 
+
+PAGE TYPE: This is a detailed view of ONE specific ${category.slice(0, -1)} item. CONTENT STRUCTURE: 1) Navigation header with breadcrumbs showing ${category} > ${itemId} 2) Hero section showcasing THIS specific item with large images 3) Detailed specifications/information about this ONE item 4) Image gallery or media section for this item 5) Reviews/testimonials specific to this item 6) Related/similar items section 7) Purchase/contact/action buttons 8) Detailed description sections 9) Footer. 
+
+IMPORTANT: Generate realistic, detailed content for ONE specific ${category.slice(0, -1)} item with ID "${itemId}". If products: show product details, specs, pricing. If blog: show full article content. If team: show person's bio, role, contact. Make it feel like a real individual item page, not a category listing. Navigation: /${category}, /about, /contact, /home. 
+
+IMPORTANT: Return ONLY complete, valid HTML starting with <!DOCTYPE html> and ending with </html>. Include all CSS embedded in <style> tags within the <head>. Include proper meta tags, viewport, and title. Ensure html and body have full height (100vh). No explanations, no markdown, no code blocks - just pure HTML code ready to render. Style: ${selectedStyle}. Item: ${itemId}. ID: ${randomSeed}-${timestamp}`
           } else if (routeInfo.isListingPage) {
             // Category listing page (e.g., /products, /blog, /team)
             const category = routeInfo.baseCategory
             
-            prompt = `Create a visually stunning ${selectedStyle} ${category} listing page using Tailwind CSS. This is a CATEGORY LISTING page showing multiple ${category} items. Include Tailwind CSS CDN in head. VISUAL REQUIREMENTS: Use real images from logo.clearbit.com/[company].com, picsum.photos/[width]/[height], randomuser.me/api/portraits/[men/women]/[1-99].jpg, heroicons.com. PAGE TYPE: This shows MULTIPLE ${category} in a grid/list format. CONTENT STRUCTURE: 1) Navigation header 2) Category hero section for ${category} 3) Filter/search bar for browsing ${category} 4) Grid of multiple ${category} cards/items (6-12 items) 5) Each card shows preview, title, brief description, and link to individual item 6) Pagination or load more section 7) Category sidebar with filters 8) Call-to-action sections 9) Footer. IMPORTANT: Generate multiple realistic ${category} items, each with unique names, descriptions, and preview content. If products: show various products with prices, images, brief descriptions. If blog: show multiple blog posts with titles, excerpts, dates. If team: show multiple team members with photos, names, roles. Each item should link to its detail page (e.g., /${category}/1, /${category}/2, etc.). Navigation: /home, /about, /contact, /${category}. Style: ${selectedStyle}. Category: ${category}. ID: ${randomSeed}-${timestamp}`
+            prompt = `Create a visually stunning ${selectedStyle} ${category} listing page with custom CSS. This is a CATEGORY LISTING page showing multiple ${category} items. Write your own high-quality CSS - DO NOT use Tailwind CSS or any external frameworks. 
+
+CRITICAL ACCESSIBILITY REQUIREMENT - READ THIS FIRST:
+CONTRAST IS MANDATORY! Every single text element MUST have proper contrast:
+- White text (#ffffff, #f1f5f9, #e2e8f0) ONLY on dark backgrounds (#000000, #0f172a, #1e293b, #334155)
+- Dark text (#000000, #0f172a, #1e293b) ONLY on light backgrounds (#ffffff, #f8fafc, #f1f5f9)
+- NEVER EVER use dark text on dark backgrounds
+- NEVER EVER use light text on light backgrounds
+- ALL headings, paragraphs, labels, buttons, and navigation text MUST follow this rule
+- Test every color combination before using it
+- If unsure, use white text on dark background or black text on white background
+
+CUSTOM CSS REQUIREMENTS: Write Tailwind-GRADE CSS quality - professional, modern, responsive utility-first approach but as custom CSS. Use advanced CSS features: CSS Grid, Flexbox, custom properties (CSS variables), modern animations, transitions, hover effects, responsive design with media queries. Your CSS should rival the quality of top frameworks but be completely custom-written. 
+
+VISUAL REQUIREMENTS: Use real images from logo.clearbit.com/[company].com, picsum.photos/[width]/[height], randomuser.me/api/portraits/[men/women]/[1-99].jpg. For icons, create your own SVG code directly inline - DO NOT link to heroicons.com or any external icon services. Write clean, modern SVG icons with proper viewBox, paths, and styling. 
+
+PAGE TYPE: This shows MULTIPLE ${category} in a grid/list format. CONTENT STRUCTURE: 1) Navigation header 2) Category hero section for ${category} 3) Filter/search bar for browsing ${category} 4) Grid of multiple ${category} cards/items (6-12 items) 5) Each card shows preview, title, brief description, and link to individual item 6) Pagination or load more section 7) Category sidebar with filters 8) Call-to-action sections 9) Footer. 
+
+IMPORTANT: Generate multiple realistic ${category} items, each with unique names, descriptions, and preview content. If products: show various products with prices, images, brief descriptions. If blog: show multiple blog posts with titles, excerpts, dates. If team: show multiple team members with photos, names, roles. Each item should link to its detail page (e.g., /${category}/1, /${category}/2, etc.). Navigation: /home, /about, /contact, /${category}. 
+
+IMPORTANT: Return ONLY complete, valid HTML starting with <!DOCTYPE html> and ending with </html>. Include all CSS embedded in <style> tags within the <head>. Include proper meta tags, viewport, and title. Ensure html and body have full height (100vh). No explanations, no markdown, no code blocks - just pure HTML code ready to render. Style: ${selectedStyle}. Category: ${category}. ID: ${randomSeed}-${timestamp}`
           } else {
             // Regular static page (e.g., /about, /contact, /services)
-            prompt = `Create a visually stunning, completely unique ${selectedStyle} ${pageName} page using Tailwind CSS. This must be an extraordinary, modern page that breaks away from boring templates. Include Tailwind CSS CDN in head. VISUAL REQUIREMENTS: Use real images ONLY from these sources - logos from logo.clearbit.com/[company].com, content images from picsum.photos/[width]/[height], person photos from randomuser.me/api/portraits/[men/women]/[1-99].jpg, icons from heroicons.com patterns. DESIGN MUST BE: Absolutely unique and modern with creative layouts, bold color schemes, innovative sections, dramatic typography, smooth animations, creative hover effects, dynamic elements, and professional but unconventional design. CONTENT SECTIONS: 1) Creative navigation header 2) Dramatic hero section specific to ${pageName} 3) Multiple innovative content sections about ${pageName} 4) Interactive elements and creative components 5) Call-to-action areas with modern styling 6) Related services/features with unique presentation 7) FAQ or insights section 8) Contact/next steps with creative design 9) Modern footer. Use realistic, engaging content - never boring corporate speak or placeholders. Navigation links: /home, /about, /services, /contact, /portfolio, /blog, /products. Return clean HTML only. Style: ${selectedStyle}. Topic: ${pageName}. ID: ${randomSeed}-${timestamp}`
+            prompt = `Create a visually stunning, completely unique ${selectedStyle} ${pageName} page with custom CSS. This must be an extraordinary, modern page that breaks away from boring templates. Write your own high-quality CSS - DO NOT use Tailwind CSS or any external frameworks. 
+
+CRITICAL ACCESSIBILITY REQUIREMENT - READ THIS FIRST:
+CONTRAST IS MANDATORY! Every single text element MUST have proper contrast:
+- White text (#ffffff, #f1f5f9, #e2e8f0) ONLY on dark backgrounds (#000000, #0f172a, #1e293b, #334155)
+- Dark text (#000000, #0f172a, #1e293b) ONLY on light backgrounds (#ffffff, #f8fafc, #f1f5f9)
+- NEVER EVER use dark text on dark backgrounds
+- NEVER EVER use light text on light backgrounds
+- ALL headings, paragraphs, labels, buttons, and navigation text MUST follow this rule
+- Test every color combination before using it
+- If unsure, use white text on dark background or black text on white background
+
+CUSTOM CSS REQUIREMENTS: Write Tailwind-GRADE CSS quality - professional, modern, responsive utility-first approach but as custom CSS. Use advanced CSS features: CSS Grid, Flexbox, custom properties (CSS variables), modern animations, transitions, hover effects, responsive design with media queries. Your CSS should rival the quality of top frameworks like Bootstrap, Tailwind, Bulma but be completely custom-written. 
+
+VISUAL REQUIREMENTS: Use real images ONLY from these sources - logos from logo.clearbit.com/[company].com, content images from picsum.photos/[width]/[height], person photos from randomuser.me/api/portraits/[men/women]/[1-99].jpg. For icons, create your own SVG code directly inline - DO NOT link to heroicons.com or any external icon services. Write clean, modern SVG icons with proper viewBox, paths, and styling. 
+
+DESIGN MUST BE: Absolutely unique and modern with creative layouts, bold color schemes, innovative sections, dramatic typography, smooth animations, creative hover effects, dynamic elements, and professional but unconventional design. 
+
+CONTENT SECTIONS: 1) Creative navigation header 2) Dramatic hero section specific to ${pageName} 3) Multiple innovative content sections about ${pageName} 4) Interactive elements and creative components 5) Call-to-action areas with modern styling 6) Related services/features with unique presentation 7) FAQ or insights section 8) Contact/next steps with creative design 9) Modern footer. Use realistic, engaging content - never boring corporate speak or placeholders. Navigation links: /home, /about, /services, /contact, /portfolio, /blog, /products. 
+
+IMPORTANT: Return ONLY complete, valid HTML starting with <!DOCTYPE html> and ending with </html>. Include all CSS embedded in <style> tags within the <head>. Include proper meta tags, viewport, and title. Ensure html and body have full height (100vh). No explanations, no markdown, no code blocks - just pure HTML code ready to render. Style: ${selectedStyle}. Topic: ${pageName}. ID: ${randomSeed}-${timestamp}`
           }
         }
 
@@ -168,7 +248,8 @@ export default {
         const response = await fetch(url, {
           method: 'GET',
           headers: {
-            'Accept': 'text/plain'
+            'Accept': 'text/plain',
+            "Authorization":"Bearer v58VDKB2ndNLDU67"
           }
         })
 
@@ -231,46 +312,24 @@ export default {
     }
 
     const cleanGeneratedHtml = (html) => {
-      // Remove any potential script tags for security
+      // Remove any potential script tags for security only
       let cleaned = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
       
-      // Remove unwanted text patterns that might be added by the AI
-      cleaned = cleaned.replace(/^.*?Here's.*?```html\s*/i, '')
-      cleaned = cleaned.replace(/```\s*.*$/i, '')
-      cleaned = cleaned.replace(/^.*?Certainly!.*?:\s*/i, '')
-      cleaned = cleaned.replace(/This page features.*$/i, '')
-      cleaned = cleaned.replace(/Feel free to customize.*$/i, '')
-      cleaned = cleaned.replace(/^\s*```html\s*/i, '')
-      cleaned = cleaned.replace(/```\s*$/i, '')
-      
-      // Clean up any remaining unwanted prefixes/suffixes
-      cleaned = cleaned.replace(/^[^<]*(?=<)/i, '') // Remove text before first HTML tag
-      cleaned = cleaned.replace(/>([^<]*$)/i, '>') // Remove text after last HTML tag
-      
-      // Ensure Tailwind CSS is included if not already present
-      if (!cleaned.includes('tailwindcss.com') && !cleaned.includes('tailwind')) {
-        // Add Tailwind CSS CDN to the head if missing
-        const tailwindCDN = '<script src="https://cdn.tailwindcss.com"><\/script>'
-        if (cleaned.includes('<head>')) {
-          cleaned = cleaned.replace('<head>', '<head>\n    ' + tailwindCDN)
-        } else if (cleaned.includes('<!DOCTYPE html>')) {
-          const htmlWrapper = '<!DOCTYPE html>\n<html>\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    ' + tailwindCDN + '\n</head>\n<body>\n' + cleaned + '\n</body>\n</html>'
-          cleaned = htmlWrapper
+      // Minimal cleaning - only remove obvious AI explanatory text if present
+      if (cleaned.includes('```html')) {
+        // Extract content between ```html and ``` if present
+        const htmlMatch = cleaned.match(/```html\s*([\s\S]*?)\s*```/i)
+        if (htmlMatch) {
+          cleaned = htmlMatch[1]
         }
       }
       
-      // Ensure full height styling
-      const fullHeightStyle = '<style>html, body { height: 100%; min-height: 100vh; margin: 0; padding: 0; }</style>'
-      if (cleaned.includes('<head>')) {
-        cleaned = cleaned.replace('<head>', '<head>\n    ' + fullHeightStyle)
-      } else {
-        cleaned = fullHeightStyle + cleaned
-      }
-      
-      // Fallback: ensure basic styling if no Tailwind classes detected
-      if (!cleaned.includes('class=') && !cleaned.includes('<style>')) {
-        const fallbackStyle = '\n          <style>\n            body { font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif; line-height: 1.6; margin: 0; padding: 20px; }\n            h1, h2, h3 { color: #333; margin-bottom: 16px; }\n            p { margin-bottom: 16px; color: #666; }\n            .container { max-width: 1200px; margin: 0 auto; }\n          </style>\n          ' + cleaned
-        cleaned = fallbackStyle
+      // Remove leading/trailing explanatory text only if HTML structure is present
+      if (cleaned.includes('<!DOCTYPE html>') || cleaned.includes('<html>')) {
+        const htmlStart = cleaned.search(/(<!DOCTYPE html|<html)/i)
+        if (htmlStart > 0) {
+          cleaned = cleaned.substring(htmlStart)
+        }
       }
       
       return cleaned.trim()
