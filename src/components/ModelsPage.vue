@@ -3,9 +3,22 @@
     <div class="container mx-auto px-4 py-8">
       <!-- Header -->
       <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-gray-800 mb-4">🤖 Available AI Models</h1>
+        <div v-if="returnUrl" class="mb-4">
+          <button 
+            @click="goBack" 
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-indigo-600 hover:text-indigo-500 transition-colors"
+          >
+            ← Back to page
+          </button>
+        </div>
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">
+          {{ returnUrl ? '🔄 Change AI Model' : '🤖 Available AI Models' }}
+        </h1>
         <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-          Choose from available AI models to power your content generation. These models offer various capabilities and quality levels.
+          {{ returnUrl 
+            ? 'Select a different AI model to regenerate your content with.' 
+            : 'Choose from available AI models to power your content generation. These models offer various capabilities and quality levels.' 
+          }}
         </p>
         <div class="mt-4">
           <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800 mr-2">
@@ -89,7 +102,7 @@
                 ? 'bg-purple-600 text-white' 
                 : 'bg-gray-100 hover:bg-purple-100 text-gray-700 hover:text-purple-700'"
             >
-              {{ selectedModel === model.name ? '✓ Selected' : 'Select Model' }}
+              {{ selectedModel === model.name ? '✓ Selected' : (returnUrl ? 'Use This Model' : 'Select Model') }}
             </button>
           </div>
         </div>
@@ -147,16 +160,18 @@
 
 <script>
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 export default {
   name: 'ModelsPage',
   setup() {
     const router = useRouter()
+    const route = useRoute()
     const models = ref([])
     const loading = ref(false)
     const error = ref(null)
     const selectedModel = ref(null)
+    const returnUrl = ref(route.query.return || null)
 
     const fetchModels = async () => {
       try {
@@ -189,11 +204,26 @@ export default {
 
     const selectModel = (model) => {
       selectedModel.value = model.name
+      
+      // If there's a return URL, automatically redirect with the selected model
+      if (returnUrl.value) {
+        const decodedReturnUrl = decodeURIComponent(returnUrl.value)
+        router.push(`${decodedReturnUrl}?model=${model.name}`)
+      }
     }
 
     const testModel = (route) => {
       if (selectedModel.value) {
         router.push(`${route}?model=${selectedModel.value}`)
+      }
+    }
+
+    const goBack = () => {
+      if (returnUrl.value) {
+        const decodedReturnUrl = decodeURIComponent(returnUrl.value)
+        router.push(decodedReturnUrl)
+      } else {
+        router.push('/')
       }
     }
 
@@ -206,9 +236,11 @@ export default {
       loading,
       error,
       selectedModel,
+      returnUrl,
       fetchModels,
       selectModel,
-      testModel
+      testModel,
+      goBack
     }
   }
 }

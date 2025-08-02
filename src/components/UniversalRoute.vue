@@ -2,34 +2,52 @@
   <div class="universal-route">
     <!-- Loading State -->
     <div v-if="loading" class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 text-white p-8">
-      <div class="loading-spinner w-12 h-12 border-4 border-white border-opacity-30 border-t-white rounded-full mb-6"></div>
+  
       <h2 class="text-2xl font-semibold mb-3 text-center">🎨 Generating AI-powered webpage...</h2>
       <p class="text-white text-opacity-90 mb-2 text-center">Creating content for: <strong>{{ currentRoute }}</strong></p>
       <p class="text-white text-opacity-75 mb-2 text-center text-sm">Using model: <strong>{{ $route.query.model || 'openai' }}</strong></p>
+      <p v-if="currentAttempt > 1" class="text-white text-opacity-70 mb-2 text-center text-sm">🔄 Retry attempt: <strong>{{ currentAttempt }}/{{ maxRetries }}</strong></p>
       <p class="text-white text-opacity-60 mb-8 text-center text-sm">⏱️ Generation time: <strong>{{ generationTime }}s</strong></p>
-      <div class="w-72 h-2 bg-white bg-opacity-20 rounded-full overflow-hidden">
+      <div class="w-72 h-2 bg-white bg-opacity-20 rounded-full overflow-hidden mb-6">
         <div class="loading-progress h-full bg-white bg-opacity-80 rounded-full"></div>
       </div>
+      <button @click="changeModel" class="bg-white bg-opacity-20 hover:bg-opacity-30 border border-white border-opacity-30 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 text-sm">
+        🔄 Change Model
+      </button>
     </div>
 
     <!-- Error State -->
     <div v-else-if="error" class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-red-500 to-red-600 text-white p-8">
       <div class="text-6xl mb-6">⚠️</div>
       <h2 class="text-2xl font-semibold mb-4 text-center">Oops! Something went wrong</h2>
-      <p class="text-white text-opacity-90 mb-8 text-center max-w-md">{{ error }}</p>
+      <p class="text-white text-opacity-90 mb-4 text-center max-w-md">{{ error }}</p>
+      <p v-if="currentAttempt > 1" class="text-white text-opacity-70 mb-8 text-center text-sm">
+        Attempted {{ currentAttempt }} times with {{ generationTime }}s total
+      </p>
       <button @click="retryGeneration" class="bg-white bg-opacity-20 hover:bg-opacity-30 border border-white border-opacity-30 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50">
         🔄 Try Again
       </button>
     </div>
 
     <!-- Generated Content -->
-    <div v-else class="content-container min-h-screen">
+    <div v-else class="content-container min-h-screen relative">
       <!-- AI Generated HTML Content -->
       <div 
         v-html="htmlContent" 
         class="generated-content min-h-screen"
         @click="handleContentClick"
       ></div>
+      
+      <!-- Floating Change Model Button -->
+      <div class="fixed bottom-6 right-6 z-50">
+        <button 
+          @click="changeModel" 
+          class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 flex items-center space-x-2"
+        >
+          <span class="text-lg">🤖</span>
+          <span class="font-medium">Change Model</span>
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -50,18 +68,29 @@ export default {
     const generationTime = ref(0)
     const startTime = ref(null)
     const timerInterval = ref(null)
+    const currentAttempt = ref(0)
+    const maxRetries = ref(3)
 
     const fetchWebsiteForRoute = async (routePath) => {
-      try {
-        loading.value = true
-        error.value = null
-        generationTime.value = 0
+      currentAttempt.value = 0
+      return await fetchWithRetry(routePath)
+    }
 
-        // Start the timer with timestamp
-        startTime.value = Date.now()
-        timerInterval.value = setInterval(() => {
-          generationTime.value = Math.floor((Date.now() - startTime.value) / 1000)
-        }, 100) // Update every 100ms for smoother display
+    const fetchWithRetry = async (routePath, retryCount = 1) => {
+      try {
+        currentAttempt.value = retryCount
+        
+        if (retryCount === 1) {
+          loading.value = true
+          error.value = null
+          generationTime.value = 0
+
+          // Start the timer with timestamp
+          startTime.value = Date.now()
+          timerInterval.value = setInterval(() => {
+            generationTime.value = Math.floor((Date.now() - startTime.value) / 1000)
+          }, 100) // Update every 100ms for smoother display
+        }
 
         // Get model from query parameters
         const modelParam = route.query.model || 'openai' // Default to openai model
@@ -71,11 +100,62 @@ export default {
         const randomSeed = Math.floor(Math.random() * 1000000)
         const timestamp = Date.now()
         
+        // Array of modern, unique design styles and approaches
+        const designStyles = [
+          'ultra-modern minimalist with bold geometric shapes and neon accents',
+          'glassmorphism design with frosted glass effects and vibrant gradients',
+          'dark mode cyberpunk aesthetic with electric blues and purples',
+          'brutalist modern design with bold typography and asymmetrical layouts',
+          'neumorphism soft UI with subtle shadows and organic shapes',
+          'retro-futuristic with holographic elements and chrome accents',
+          'art deco inspired modern with gold accents and elegant curves',
+          'scandinavian modern with pastel colors and clean lines',
+          'maximalist colorful with bold patterns and dynamic animations',
+          'monochromatic modern with striking black and white contrasts'
+        ]
+        
+        const selectedStyle = designStyles[Math.floor(Math.random() * designStyles.length)]
+        
+        // Smart route analysis for contextual page generation
+        const analyzeRoute = (path) => {
+          const segments = path.split('/').filter(s => s)
+          const lastSegment = segments[segments.length - 1]
+          const isNumeric = /^\d+$/.test(lastSegment)
+          const hasId = isNumeric || /^[a-f0-9]{24}$|^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(lastSegment)
+          
+          return {
+            segments,
+            lastSegment,
+            isNumeric,
+            hasId,
+            baseCategory: segments[0] || 'home',
+            isDetailPage: hasId,
+            isListingPage: segments.length === 1 && !hasId,
+            itemId: hasId ? lastSegment : null
+          }
+        }
+        
         if (routePath === '/' || routePath === '') {
-          prompt = 'Create a comprehensive, full-featured HTML homepage using Tailwind CSS. This must be a complete, production-ready website with substantial content. Include the Tailwind CSS CDN link in the head section. REQUIREMENTS: Must include ALL of the following sections: 1) Professional navigation header with logo and menu items, 2) Hero section with compelling headline, subheadline, and call-to-action buttons, 3) About/Company section with detailed description, 4) Services/Features section with at least 4-6 service cards, 5) Testimonials section with multiple customer reviews, 6) Portfolio/Projects showcase, 7) Team section with staff profiles, 8) FAQ section with common questions, 9) Contact section with form and contact details, 10) Comprehensive footer with links, social media, and company info. Each section should be fully populated with realistic, detailed content - not placeholder text. Use modern Tailwind utility classes for professional styling. Include proper meta tags and viewport settings. IMPORTANT: All navigation links, footer links, and any other internal links must use proper routing paths like /about, /services, /contact, /portfolio, /blog, etc. Do not use # or external URLs for internal navigation. Return only clean HTML code without any explanations, markdown formatting, or commentary. Unique ID: ' + randomSeed + '-' + timestamp
+          prompt = `Create an absolutely stunning, unique ${selectedStyle} homepage using Tailwind CSS. This must be a jaw-dropping, modern website that stands out from typical corporate pages. Include Tailwind CSS CDN in head. VISUAL REQUIREMENTS: Use real images from these sources ONLY - logos from logo.clearbit.com/[company].com (e.g. logo.clearbit.com/google.com), hero images from picsum.photos/1200/600, profile photos from randomuser.me/api/portraits/[men/women]/[1-99].jpg, icons from heroicons.com. DESIGN MUST BE: Visually striking with bold colors, unique layouts, creative sections, modern typography, interactive elements, creative hover effects, dynamic gradients, and unconventional but professional design choices. SECTIONS: 1) Eye-catching navigation with creative logo placement 2) Hero section with dramatic visuals and compelling copy 3) Unique about section with creative storytelling 4) Services grid with innovative card designs 5) Dynamic testimonials with personality 6) Portfolio showcase with hover effects 7) Team section with creative profiles 8) Interactive FAQ with smooth animations 9) Contact form with modern styling 10) Footer with social links and creative elements. Use realistic content, never placeholders. Navigation links: /about, /services, /contact, /portfolio, /blog, /team, /products. Return clean HTML only. Style: ${selectedStyle}. ID: ${randomSeed}-${timestamp}`
         } else {
+          const routeInfo = analyzeRoute(routePath)
           const pageName = routePath.replace('/', '').replace(/[-_]/g, ' ')
-          prompt = 'Create a comprehensive, full-featured HTML ' + pageName + ' page using Tailwind CSS. This must be a complete, production-ready page with substantial content relevant to ' + pageName + '. Include the Tailwind CSS CDN link in the head section. REQUIREMENTS: Must include ALL of the following sections: 1) Professional navigation header matching the site theme, 2) Page hero/banner section with relevant headline, 3) Detailed main content section with comprehensive information about ' + pageName + ', 4) Multiple sub-sections breaking down different aspects of ' + pageName + ', 5) Call-to-action sections, 6) Related services or features section, 7) FAQ or common questions about ' + pageName + ', 8) Contact or next steps section, 9) Comprehensive footer. Each section must be fully populated with realistic, detailed, and relevant content - not placeholder text. The page should feel like a real, professional website page. Use modern Tailwind utility classes for professional styling. Include proper navigation, main content sections, and footer. IMPORTANT: All navigation links, footer links, and any other internal links must use proper routing paths like /home, /about, /services, /contact, /portfolio, /blog, etc. Do not use # or external URLs for internal navigation. Return only clean HTML code without any explanations, markdown formatting, or commentary. Unique ID: ' + randomSeed + '-' + timestamp
+          
+          if (routeInfo.isDetailPage) {
+            // Single item detail page (e.g., /products/123, /blog/my-post, /team/john-doe)
+            const category = routeInfo.baseCategory
+            const itemId = routeInfo.itemId
+            
+            prompt = `Create a stunning ${selectedStyle} individual ${category} detail page using Tailwind CSS for item/ID: "${itemId}". This is a SINGLE ITEM detail page, not a listing. Include Tailwind CSS CDN in head. VISUAL REQUIREMENTS: Use real images from logo.clearbit.com/[company].com, picsum.photos/[width]/[height], randomuser.me/api/portraits/[men/women]/[1-99].jpg, heroicons.com. PAGE TYPE: This is a detailed view of ONE specific ${category.slice(0, -1)} item. CONTENT STRUCTURE: 1) Navigation header with breadcrumbs showing ${category} > ${itemId} 2) Hero section showcasing THIS specific item with large images 3) Detailed specifications/information about this ONE item 4) Image gallery or media section for this item 5) Reviews/testimonials specific to this item 6) Related/similar items section 7) Purchase/contact/action buttons 8) Detailed description sections 9) Footer. IMPORTANT: Generate realistic, detailed content for ONE specific ${category.slice(0, -1)} item with ID "${itemId}". If products: show product details, specs, pricing. If blog: show full article content. If team: show person's bio, role, contact. Make it feel like a real individual item page, not a category listing. Navigation: /${category}, /about, /contact, /home. Style: ${selectedStyle}. Item: ${itemId}. ID: ${randomSeed}-${timestamp}`
+          } else if (routeInfo.isListingPage) {
+            // Category listing page (e.g., /products, /blog, /team)
+            const category = routeInfo.baseCategory
+            
+            prompt = `Create a visually stunning ${selectedStyle} ${category} listing page using Tailwind CSS. This is a CATEGORY LISTING page showing multiple ${category} items. Include Tailwind CSS CDN in head. VISUAL REQUIREMENTS: Use real images from logo.clearbit.com/[company].com, picsum.photos/[width]/[height], randomuser.me/api/portraits/[men/women]/[1-99].jpg, heroicons.com. PAGE TYPE: This shows MULTIPLE ${category} in a grid/list format. CONTENT STRUCTURE: 1) Navigation header 2) Category hero section for ${category} 3) Filter/search bar for browsing ${category} 4) Grid of multiple ${category} cards/items (6-12 items) 5) Each card shows preview, title, brief description, and link to individual item 6) Pagination or load more section 7) Category sidebar with filters 8) Call-to-action sections 9) Footer. IMPORTANT: Generate multiple realistic ${category} items, each with unique names, descriptions, and preview content. If products: show various products with prices, images, brief descriptions. If blog: show multiple blog posts with titles, excerpts, dates. If team: show multiple team members with photos, names, roles. Each item should link to its detail page (e.g., /${category}/1, /${category}/2, etc.). Navigation: /home, /about, /contact, /${category}. Style: ${selectedStyle}. Category: ${category}. ID: ${randomSeed}-${timestamp}`
+          } else {
+            // Regular static page (e.g., /about, /contact, /services)
+            prompt = `Create a visually stunning, completely unique ${selectedStyle} ${pageName} page using Tailwind CSS. This must be an extraordinary, modern page that breaks away from boring templates. Include Tailwind CSS CDN in head. VISUAL REQUIREMENTS: Use real images ONLY from these sources - logos from logo.clearbit.com/[company].com, content images from picsum.photos/[width]/[height], person photos from randomuser.me/api/portraits/[men/women]/[1-99].jpg, icons from heroicons.com patterns. DESIGN MUST BE: Absolutely unique and modern with creative layouts, bold color schemes, innovative sections, dramatic typography, smooth animations, creative hover effects, dynamic elements, and professional but unconventional design. CONTENT SECTIONS: 1) Creative navigation header 2) Dramatic hero section specific to ${pageName} 3) Multiple innovative content sections about ${pageName} 4) Interactive elements and creative components 5) Call-to-action areas with modern styling 6) Related services/features with unique presentation 7) FAQ or insights section 8) Contact/next steps with creative design 9) Modern footer. Use realistic, engaging content - never boring corporate speak or placeholders. Navigation links: /home, /about, /services, /contact, /portfolio, /blog, /products. Return clean HTML only. Style: ${selectedStyle}. Topic: ${pageName}. ID: ${randomSeed}-${timestamp}`
+          }
         }
 
         const encodedPrompt = encodeURIComponent(prompt)
@@ -93,7 +173,16 @@ export default {
         })
 
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
+          // Specific error handling for different status codes
+          if (response.status === 429) {
+            throw new Error(`Rate limited (429) - too many requests`)
+          } else if (response.status >= 500) {
+            throw new Error(`Server error (${response.status}) - service temporarily unavailable`)
+          } else if (response.status === 404) {
+            throw new Error(`Model not found (404) - the selected model may be unavailable`)
+          } else {
+            throw new Error(`HTTP error! status: ${response.status}`)
+          }
         }
 
         const generatedHtml = await response.text()
@@ -102,24 +191,41 @@ export default {
           throw new Error('Received empty response from AI service')
         }
 
+        // Check if response looks like an error message instead of HTML
+        if (generatedHtml.toLowerCase().includes('error') && generatedHtml.length < 200) {
+          throw new Error('AI service returned an error response')
+        }
+
         // Clean and enhance the generated HTML
         const cleanedHtml = cleanGeneratedHtml(generatedHtml)
         
         htmlContent.value = cleanedHtml
         
       } catch (err) {
-        console.error('Error fetching website:', err)
-        error.value = `Failed to generate webpage: ${err.message}`
+        console.error(`Error fetching website (attempt ${retryCount}):`, err)
+        
+        // If we haven't reached max retries, try again
+        if (retryCount < maxRetries.value) {
+          console.log(`Retrying... (${retryCount + 1}/${maxRetries.value})`)
+          // Wait a bit before retrying (exponential backoff)
+          await new Promise(resolve => setTimeout(resolve, Math.pow(2, retryCount) * 1000))
+          return await fetchWithRetry(routePath, retryCount + 1)
+        }
+        
+        // All retries exhausted, show error
+        error.value = `Failed to generate webpage after ${maxRetries.value} attempts: ${err.message}`
         
         // Fallback content
         htmlContent.value = generateFallbackContent(routePath)
         
       } finally {
-        loading.value = false
-        // Clear the timer
-        if (timerInterval.value) {
-          clearInterval(timerInterval.value)
-          timerInterval.value = null
+        // Only clear loading and timer on final attempt (success or all retries exhausted)
+        if (retryCount >= maxRetries.value || htmlContent.value) {
+          loading.value = false
+          if (timerInterval.value) {
+            clearInterval(timerInterval.value)
+            timerInterval.value = null
+          }
         }
       }
     }
@@ -188,6 +294,13 @@ export default {
       fetchWebsiteForRoute(currentRoute.value)
     }
 
+    const changeModel = () => {
+      // Navigate to the models page, preserving the current route for return
+      const currentPath = route.path
+      const returnUrl = encodeURIComponent(currentPath)
+      router.push(`/ai/models?return=${returnUrl}`)
+    }
+
     const handleContentClick = (event) => {
       // Prevent navigation for links in generated content
       if (event.target.tagName === 'A') {
@@ -224,7 +337,10 @@ export default {
       htmlContent,
       currentRoute,
       generationTime,
+      currentAttempt,
+      maxRetries,
       retryGeneration,
+      changeModel,
       handleContentClick
     }
   }
